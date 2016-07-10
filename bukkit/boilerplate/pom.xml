@@ -7,7 +7,7 @@
     <!-- Parent Artifact Information -->
     <parent>
         <artifactId>bukkit</artifactId>
-        <groupId>com.minepay.plugin</groupId>
+        <groupId>net.minepay.plugin</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 

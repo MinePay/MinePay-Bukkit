@@ -2,5 +2,5 @@ name: MinePay
 version: ${project.version}
 descript: ${project.description}
 author: MinePay
-main: com.minepay.plugin.bukkit.MinePayPlugin
+main: net.minepay.plugin.bukkit.MinePayPlugin
 prefix: MinePay

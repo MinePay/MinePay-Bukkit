@@ -1,4 +1,4 @@
-package com.minepay.plugin.bukkit.telemetry;
+package net.minepay.plugin.bukkit.telemetry;
 
 import org.json.simple.JSONObject;
 

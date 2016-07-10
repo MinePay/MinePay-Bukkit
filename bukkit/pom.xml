@@ -49,12 +49,6 @@
                 <version>1.0-SNAPSHOT</version>
             </dependency>
 
-            <!-- Utilities -->
-            <dependency>
-                <groupId>com.google.code.findbugs</groupId>
-                <artifactId>jsr305</artifactId>
-            </dependency>
-
             <!-- Bukkit -->
             <dependency>
                 <groupId>org.bukkit</groupId>

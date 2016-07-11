@@ -41,7 +41,7 @@ public class TelemetryTask implements Runnable {
         submission.addDatapoint(TelemetryDataPoint.createLong("ram-total", Runtime.getRuntime().totalMemory()));
 
         submission.addDatapoint(TelemetryDataPoint.createInteger("players-current", this.plugin.getBukkitBoilerplate().getOnlinePlayers().size()));
-        submission.addDatapoint(TelemetryDataPoint.createInteger("players-max", Bukkit.getServer().getMaxPlayers()));
+        // submission.addDatapoint(TelemetryDataPoint.createInteger("players-max", Bukkit.getServer().getMaxPlayers()));
 
         // TODO: TPS
 

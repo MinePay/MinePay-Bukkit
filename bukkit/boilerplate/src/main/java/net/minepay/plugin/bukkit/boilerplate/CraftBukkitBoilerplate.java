@@ -22,7 +22,7 @@ public interface CraftBukkitBoilerplate {
      */
     @Nonnull
     static Optional<CraftBukkitBoilerplate> getInstance() {
-        String serverVersion = Bukkit.getServer().getVersion().replace('.', '_');
+        String serverVersion = Bukkit.getServer().getClass().getPackage().getName().replaceAll("^.*\\.v(\\d+)_(\\d+)_R(\\d+)\\..*$", "v$1_$2_R$3");
 
         try {
             Class<?> clazz = Class.forName("com.minepay.plugin.bukkit.boilerplate." + serverVersion + ".CraftBukkitBoilerplateImpl");

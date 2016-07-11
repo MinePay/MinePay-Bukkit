@@ -17,6 +17,7 @@ import javax.annotation.Nonnull;
  */
 public class MinePayPlugin extends JavaPlugin {
     private final PluginConfiguration configuration = new PluginConfiguration();
+    private final BukkitBoilerplate bukkitBoilerplate = BukkitBoilerplate.getInstance();
 
     @Nonnull
     public PluginConfiguration getConfiguration() {
@@ -25,7 +26,7 @@ public class MinePayPlugin extends JavaPlugin {
 
     @Nonnull
     public BukkitBoilerplate getBukkitBoilerplate() {
-        return null;
+        return this.bukkitBoilerplate;
     }
 
     /**

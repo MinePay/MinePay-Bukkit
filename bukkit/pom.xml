@@ -72,5 +72,6 @@
         <module>core</module>
         <module>boilerplate</module>
         <module>boilerplate-outdated</module>
+        <module>boilerplate-110-R1</module>
     </modules>
 </project>

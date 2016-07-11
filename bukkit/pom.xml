@@ -48,6 +48,16 @@
                 <artifactId>boilerplate</artifactId>
                 <version>1.0-SNAPSHOT</version>
             </dependency>
+            <dependency>
+                <groupId>net.minepay.plugin</groupId>
+                <artifactId>boilerplate-v110-R1</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>net.minepay.plugin</groupId>
+                <artifactId>boilerplate-outdated</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>
 
             <!-- Bukkit -->
             <dependency>

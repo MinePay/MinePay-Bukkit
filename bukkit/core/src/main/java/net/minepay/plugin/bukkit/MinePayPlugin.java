@@ -17,7 +17,7 @@ import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 
 /**
- * Provides an entry point
+ * Provides an entry point to the MinePay Bukkit integration.
  *
  * @author <a href="mailto:johannesd@torchmind.com">Johannes Donath</a>
  */
@@ -68,7 +68,8 @@ public class MinePayPlugin extends JavaPlugin {
      * Disables the plugin functionality when the user temporarily disables synchronization or
      * chooses to un-register their server.
      *
-     * TODO: This method should also be called when the API becomes un-available for longer periods.
+     * TODO: This method should also be called when the API becomes un-available for longer
+     * periods.
      */
     public void disableFunctionality() {
         if (this.tickCounterTaskId != -1) {

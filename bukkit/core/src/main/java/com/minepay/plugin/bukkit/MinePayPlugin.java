@@ -6,7 +6,7 @@ import com.minepay.plugin.bukkit.command.MinePayCommandExecutor;
 import com.minepay.plugin.bukkit.task.TelemetryTask;
 import com.minepay.plugin.bukkit.task.TickAverageTask;
 import com.minepay.plugin.bukkit.task.TickCounterTask;
-import com.minepay.plugin.bukkit.telemetry.TelemetrySubmission;
+import com.minepay.plugin.bukkit.telemetry.Submission;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -122,7 +122,7 @@ public class MinePayPlugin extends JavaPlugin {
      * @return a submission.
      */
     @Nullable
-    public TelemetrySubmission getLatestSubmission() {
+    public Submission getLatestSubmission() {
         return this.telemetryTask.getSubmission();
     }
 

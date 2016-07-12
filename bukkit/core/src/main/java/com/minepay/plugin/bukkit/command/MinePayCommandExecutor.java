@@ -1,8 +1,8 @@
 package com.minepay.plugin.bukkit.command;
 
 import com.minepay.plugin.bukkit.MinePayPlugin;
-import com.minepay.plugin.bukkit.telemetry.TelemetryDataPoint;
-import com.minepay.plugin.bukkit.telemetry.TelemetrySubmission;
+import com.minepay.plugin.bukkit.telemetry.DataPoint;
+import com.minepay.plugin.bukkit.telemetry.Submission;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
@@ -99,27 +99,27 @@ public class MinePayCommandExecutor implements CommandExecutor {
                                 sender.sendMessage("");
                                 return true;
                             case "latest":
-                                TelemetrySubmission submission = this.plugin.getLatestSubmission();
+                                Submission submission = this.plugin.getLatestSubmission();
 
                                 if (submission != null) {
                                     sender.sendMessage("The following telemetry report has been generated at " + ChatColor.GREEN + TIMESTAMP_FORMAT.format(submission.getGenerationTimestamp()) + ChatColor.WHITE + " and was submitted to the MinePay servers. If you wish to opt-out of this service, execute " + ChatColor.GREEN + "\"/" + label + " telemetry opt-out\"" + ChatColor.WHITE + " from your server console or the in-game chat. Please note, that disabling telemetry may interfere with some of the MinePay services.");
                                     sender.sendMessage("");
 
-                                    for (TelemetryDataPoint dataPoint : submission) {
+                                    for (DataPoint dataPoint : submission) {
                                         sender.sendMessage("--- " + ChatColor.GREEN + dataPoint.getName());
 
                                         final String type;
                                         final String value;
 
-                                        if (dataPoint instanceof TelemetryDataPoint.FloatDataPoint) {
+                                        if (dataPoint instanceof DataPoint.FloatDataPoint) {
                                             type = "Float";
-                                            value = Float.toString(((TelemetryDataPoint.FloatDataPoint) dataPoint).getValue());
-                                        } else if (dataPoint instanceof TelemetryDataPoint.IntegerDataPoint) {
+                                            value = Float.toString(((DataPoint.FloatDataPoint) dataPoint).getValue());
+                                        } else if (dataPoint instanceof DataPoint.IntegerDataPoint) {
                                             type = "Integer";
-                                            value = Integer.toString(((TelemetryDataPoint.IntegerDataPoint) dataPoint).getValue());
-                                        } else if (dataPoint instanceof TelemetryDataPoint.LongDataPoint) {
+                                            value = Integer.toString(((DataPoint.IntegerDataPoint) dataPoint).getValue());
+                                        } else if (dataPoint instanceof DataPoint.LongDataPoint) {
                                             type = "Long";
-                                            value = Long.toString(((TelemetryDataPoint.LongDataPoint) dataPoint).getValue());
+                                            value = Long.toString(((DataPoint.LongDataPoint) dataPoint).getValue());
                                         } else {
                                             type = "Unknown";
                                             value = "";

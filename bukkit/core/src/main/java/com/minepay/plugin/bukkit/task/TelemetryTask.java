@@ -1,8 +1,8 @@
 package com.minepay.plugin.bukkit.task;
 
 import com.minepay.plugin.bukkit.MinePayPlugin;
-import com.minepay.plugin.bukkit.telemetry.TelemetryDataPoint;
-import com.minepay.plugin.bukkit.telemetry.TelemetrySubmission;
+import com.minepay.plugin.bukkit.telemetry.DataPoint;
+import com.minepay.plugin.bukkit.telemetry.Submission;
 
 import org.bukkit.Bukkit;
 
@@ -24,7 +24,7 @@ import javax.annotation.Nullable;
 public class TelemetryTask implements Runnable {
     public static final String TELEMETRY_ENDPOINT_URL = "https://api.minepay.net/v1/telemetry";
     private final MinePayPlugin plugin;
-    private TelemetrySubmission submission;
+    private Submission submission;
 
     public TelemetryTask(@Nonnull MinePayPlugin plugin) {
         this.plugin = plugin;
@@ -36,7 +36,7 @@ public class TelemetryTask implements Runnable {
      * @return a submission.
      */
     @Nullable
-    public TelemetrySubmission getSubmission() {
+    public Submission getSubmission() {
         return this.submission;
     }
 
@@ -46,15 +46,15 @@ public class TelemetryTask implements Runnable {
     @Override
     @SuppressWarnings("deprecation") // Bukkit idiotism
     public void run() {
-        TelemetrySubmission.Builder builder = TelemetrySubmission.builder();
+        Submission.Builder builder = Submission.builder();
 
-        builder.add(TelemetryDataPoint.createLong("ram-free", Runtime.getRuntime().freeMemory()));
-        builder.add(TelemetryDataPoint.createLong("ram-max", Runtime.getRuntime().maxMemory()));
-        builder.add(TelemetryDataPoint.createLong("ram-total", Runtime.getRuntime().totalMemory()));
-        builder.add(TelemetryDataPoint.createInteger("players-current", this.plugin.getBukkitBoilerplate().getOnlinePlayers().size()));
-        builder.add(TelemetryDataPoint.createFloat("tps", this.plugin.getTickAverage()));
+        builder.add(DataPoint.createLong("ram-free", Runtime.getRuntime().freeMemory()));
+        builder.add(DataPoint.createLong("ram-max", Runtime.getRuntime().maxMemory()));
+        builder.add(DataPoint.createLong("ram-total", Runtime.getRuntime().totalMemory()));
+        builder.add(DataPoint.createInteger("players-current", this.plugin.getBukkitBoilerplate().getOnlinePlayers().size()));
+        builder.add(DataPoint.createFloat("tps", this.plugin.getTickAverage()));
 
-        TelemetrySubmission submission = builder.build();
+        Submission submission = builder.build();
         this.submission = submission;
 
         Bukkit.getServer().getScheduler().scheduleAsyncDelayedTask(this.plugin, () -> this.submit(submission));
@@ -65,7 +65,7 @@ public class TelemetryTask implements Runnable {
      *
      * @param submission a set of data points.
      */
-    public void submit(@Nonnull TelemetrySubmission submission) {
+    public void submit(@Nonnull Submission submission) {
         try {
             HttpURLConnection connection = (HttpURLConnection) (new URL(TELEMETRY_ENDPOINT_URL)).openConnection();
             connection.setRequestMethod("POST");

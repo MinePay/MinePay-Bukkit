@@ -9,10 +9,10 @@ import javax.annotation.Nonnull;
  *
  * @author <a href="mailto:johannesd@torchmind.com">Johannes Donath</a>
  */
-public class TelemetryDataPoint {
+public class DataPoint {
     private final String name;
 
-    protected TelemetryDataPoint(@Nonnull String name) {
+    protected DataPoint(@Nonnull String name) {
         this.name = name;
     }
 
@@ -52,7 +52,7 @@ public class TelemetryDataPoint {
     /**
      * Represents a float based data point.
      */
-    public static class FloatDataPoint extends TelemetryDataPoint {
+    public static class FloatDataPoint extends DataPoint {
         private final float value;
 
         protected FloatDataPoint(@Nonnull String name, float value) {
@@ -77,7 +77,7 @@ public class TelemetryDataPoint {
     /**
      * Represents an integer based data point.
      */
-    public static class IntegerDataPoint extends TelemetryDataPoint {
+    public static class IntegerDataPoint extends DataPoint {
         private final int value;
 
         protected IntegerDataPoint(@Nonnull String name, int value) {
@@ -105,7 +105,7 @@ public class TelemetryDataPoint {
     /**
      * Represents a long based data point.
      */
-    public static class LongDataPoint extends TelemetryDataPoint {
+    public static class LongDataPoint extends DataPoint {
         private final long value;
 
         protected LongDataPoint(@Nonnull String name, long value) {

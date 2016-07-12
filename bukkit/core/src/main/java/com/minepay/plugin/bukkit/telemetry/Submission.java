@@ -20,11 +20,11 @@ import javax.annotation.concurrent.ThreadSafe;
  * @author <a href="mailto:johannesd@torchmind.com">Johannes Donath</a>
  */
 @ThreadSafe
-public final class TelemetrySubmission implements Iterable<TelemetryDataPoint> {
-    private final List<TelemetryDataPoint> dataPoints;
+public final class Submission implements Iterable<DataPoint> {
+    private final List<DataPoint> dataPoints;
     private final LocalDateTime generationTimestamp = LocalDateTime.now();
 
-    private TelemetrySubmission(@Nonnull List<TelemetryDataPoint> dataPoints) {
+    private Submission(@Nonnull List<DataPoint> dataPoints) {
         this.dataPoints = dataPoints;
     }
 
@@ -52,7 +52,7 @@ public final class TelemetrySubmission implements Iterable<TelemetryDataPoint> {
      * {@inheritDoc}
      */
     @Override
-    public Iterator<TelemetryDataPoint> iterator() {
+    public Iterator<DataPoint> iterator() {
         return this.dataPoints.iterator();
     }
 
@@ -68,7 +68,7 @@ public final class TelemetrySubmission implements Iterable<TelemetryDataPoint> {
         JSONArray array = new JSONArray();
 
         this.dataPoints.stream()
-                .map(TelemetryDataPoint::toEncodedObject)
+                .map(DataPoint::toEncodedObject)
                 .forEach(array::add);
 
         object.put("datapoints", array);
@@ -80,7 +80,7 @@ public final class TelemetrySubmission implements Iterable<TelemetryDataPoint> {
      */
     @NotThreadSafe
     public final static class Builder {
-        private final ArrayList<TelemetryDataPoint> dataPoints = new ArrayList<>();
+        private final ArrayList<DataPoint> dataPoints = new ArrayList<>();
 
         private Builder() {
         }
@@ -91,9 +91,9 @@ public final class TelemetrySubmission implements Iterable<TelemetryDataPoint> {
          * @return a submission.
          */
         @Nonnull
-        public TelemetrySubmission build() {
+        public Submission build() {
             try {
-                return new TelemetrySubmission(ImmutableList.copyOf(this.dataPoints));
+                return new Submission(ImmutableList.copyOf(this.dataPoints));
             } finally {
                 this.reset();
             }
@@ -111,7 +111,7 @@ public final class TelemetrySubmission implements Iterable<TelemetryDataPoint> {
          *
          * @param dataPoint a data point.
          */
-        public void add(@Nonnull TelemetryDataPoint dataPoint) {
+        public void add(@Nonnull DataPoint dataPoint) {
             this.dataPoints.add(dataPoint);
         }
 
@@ -120,7 +120,7 @@ public final class TelemetrySubmission implements Iterable<TelemetryDataPoint> {
          *
          * @param dataPoint a data point.
          */
-        public void remove(@Nonnull TelemetryDataPoint dataPoint) {
+        public void remove(@Nonnull DataPoint dataPoint) {
             this.dataPoints.remove(dataPoint);
         }
     }

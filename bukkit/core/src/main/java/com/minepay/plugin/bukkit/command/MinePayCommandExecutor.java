@@ -2,6 +2,7 @@ package com.minepay.plugin.bukkit.command;
 
 import com.minepay.plugin.bukkit.MinePayPlugin;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -30,7 +31,8 @@ public class MinePayCommandExecutor implements CommandExecutor {
             return false;
         }
 
-        sender.sendMessage("-----------------------------------------------------");
+        String version = this.getClass().getPackage().getImplementationVersion();
+        sender.sendMessage(StringUtils.center(ChatColor.GREEN + " MinePay " + (version != null ? "v" + version : "(Development Snapshot)") + " " + ChatColor.WHITE, 59, "-"));
 
         if (args.length != 0) {
             switch (args[0].toLowerCase()) {
@@ -63,7 +65,7 @@ public class MinePayCommandExecutor implements CommandExecutor {
                                 }
 
                                 sender.sendMessage("Telemetry has been " + ChatColor.GREEN + "enabled " + ChatColor.WHITE + "permanently");
-                                break;
+                                return true;
                             case "opt-out":
                                 this.plugin.getConfiguration().setTelemetryEnabled(false);
                                 this.plugin.saveConfiguration();
@@ -71,7 +73,7 @@ public class MinePayCommandExecutor implements CommandExecutor {
 
                                 sender.sendMessage("Telemetry has been " + ChatColor.RED + "disabled " + ChatColor.WHITE + "permanently");
                                 sender.sendMessage("");
-                                break;
+                                return true;
                             case "enable":
                                 if (!this.plugin.getConfiguration().getServerId().isEmpty()) {
                                     this.plugin.enableTelemetry();
@@ -80,7 +82,7 @@ public class MinePayCommandExecutor implements CommandExecutor {
                                     sender.sendMessage(ChatColor.RED + "Server must be registered in order to enable telemetry");
                                 }
                                 sender.sendMessage("");
-                                break;
+                                return true;
                             case "disable":
                                 if (!this.plugin.getConfiguration().getServerId().isEmpty()) {
                                     this.plugin.disableTelemetry();
@@ -89,7 +91,7 @@ public class MinePayCommandExecutor implements CommandExecutor {
                                     sender.sendMessage(ChatColor.RED + "Server must be registered in order to enable telemetry");
                                 }
                                 sender.sendMessage("");
-                                break;
+                                return true;
                             default:
                                 sender.sendMessage(ChatColor.RED + "Unknown command");
                                 sender.sendMessage("");
@@ -115,9 +117,6 @@ public class MinePayCommandExecutor implements CommandExecutor {
             }
         }
 
-        String version = this.getClass().getPackage().getImplementationVersion();
-        sender.sendMessage(ChatColor.GREEN + "MinePay Plugin v" + version);
-
         if (!this.plugin.getConfiguration().getServerId().isEmpty()) {
             sender.sendMessage(ChatColor.GREEN + "Server ID: " + ChatColor.WHITE + this.plugin.getConfiguration().getServerId());
             sender.sendMessage(ChatColor.GREEN + "Average TPS: " + ChatColor.WHITE + this.plugin.getTickAverage());
@@ -132,8 +131,6 @@ public class MinePayCommandExecutor implements CommandExecutor {
         sender.sendMessage(ChatColor.GREEN + "Valid commands are:");
         sender.sendMessage(ChatColor.GREEN + "    serverId " + ChatColor.WHITE + " - Registers the server with MinePay");
         sender.sendMessage(ChatColor.GREEN + "    telemetry " + ChatColor.WHITE + " - En- or Disables telemetry");
-        sender.sendMessage("");
-        sender.sendMessage("Please contact MinePay support if you are experiencing any issues with this plugin");
         sender.sendMessage("");
 
         return true;

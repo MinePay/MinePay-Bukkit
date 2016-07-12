@@ -69,7 +69,7 @@ public class MinePayPlugin extends JavaPlugin {
      * chooses to un-register their server.
      *
      * TODO: This method should also be called when the API becomes un-available for longer
-     * periods.
+     * periods of time.
      */
     public void disableFunctionality() {
         if (this.tickCounterTaskId != -1) {

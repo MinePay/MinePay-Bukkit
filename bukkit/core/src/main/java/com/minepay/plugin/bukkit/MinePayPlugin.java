@@ -1,11 +1,11 @@
-package net.minepay.plugin.bukkit;
+package com.minepay.plugin.bukkit;
 
-import net.minepay.plugin.bukkit.boilerplate.BukkitBoilerplate;
-import net.minepay.plugin.bukkit.boilerplate.CraftBukkitBoilerplate;
-import net.minepay.plugin.bukkit.command.MinePayCommandExecutor;
-import net.minepay.plugin.bukkit.task.TelemetryTask;
-import net.minepay.plugin.bukkit.task.TickAverageTask;
-import net.minepay.plugin.bukkit.task.TickCounterTask;
+import com.minepay.plugin.bukkit.boilerplate.BukkitBoilerplate;
+import com.minepay.plugin.bukkit.boilerplate.CraftBukkitBoilerplate;
+import com.minepay.plugin.bukkit.command.MinePayCommandExecutor;
+import com.minepay.plugin.bukkit.task.TelemetryTask;
+import com.minepay.plugin.bukkit.task.TickAverageTask;
+import com.minepay.plugin.bukkit.task.TickCounterTask;
 
 import org.bukkit.plugin.java.JavaPlugin;
 

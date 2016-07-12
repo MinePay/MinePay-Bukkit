@@ -1,4 +1,4 @@
-package net.minepay.plugin.bukkit.boilerplate;
+package com.minepay.plugin.bukkit.boilerplate;
 
 import org.bukkit.Bukkit;
 

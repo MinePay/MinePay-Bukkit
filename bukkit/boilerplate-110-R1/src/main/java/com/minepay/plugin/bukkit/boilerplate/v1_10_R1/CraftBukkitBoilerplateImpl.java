@@ -1,7 +1,7 @@
 package com.minepay.plugin.bukkit.boilerplate.v1_10_R1;
 
 import net.minecraft.server.v1_10_R1.MinecraftServer;
-import net.minepay.plugin.bukkit.boilerplate.CraftBukkitBoilerplate;
+import com.minepay.plugin.bukkit.boilerplate.CraftBukkitBoilerplate;
 
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_10_R1.CraftServer;

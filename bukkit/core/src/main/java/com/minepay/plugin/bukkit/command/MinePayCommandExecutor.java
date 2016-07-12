@@ -1,6 +1,6 @@
-package net.minepay.plugin.bukkit.command;
+package com.minepay.plugin.bukkit.command;
 
-import net.minepay.plugin.bukkit.MinePayPlugin;
+import com.minepay.plugin.bukkit.MinePayPlugin;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;

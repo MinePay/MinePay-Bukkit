@@ -1,4 +1,4 @@
-package net.minepay.plugin.bukkit;
+package com.minepay.plugin.bukkit;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;

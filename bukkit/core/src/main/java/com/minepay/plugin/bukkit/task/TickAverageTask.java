@@ -1,6 +1,6 @@
-package net.minepay.plugin.bukkit.task;
+package com.minepay.plugin.bukkit.task;
 
-import net.minepay.plugin.bukkit.boilerplate.CraftBukkitBoilerplate;
+import com.minepay.plugin.bukkit.boilerplate.CraftBukkitBoilerplate;
 
 import java.time.Duration;
 import java.time.Instant;

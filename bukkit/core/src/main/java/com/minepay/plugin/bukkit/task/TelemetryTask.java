@@ -1,8 +1,8 @@
-package net.minepay.plugin.bukkit.task;
+package com.minepay.plugin.bukkit.task;
 
-import net.minepay.plugin.bukkit.MinePayPlugin;
-import net.minepay.plugin.bukkit.telemetry.TelemetryDataPoint;
-import net.minepay.plugin.bukkit.telemetry.TelemetrySubmission;
+import com.minepay.plugin.bukkit.MinePayPlugin;
+import com.minepay.plugin.bukkit.telemetry.TelemetryDataPoint;
+import com.minepay.plugin.bukkit.telemetry.TelemetrySubmission;
 
 import org.bukkit.Bukkit;
 

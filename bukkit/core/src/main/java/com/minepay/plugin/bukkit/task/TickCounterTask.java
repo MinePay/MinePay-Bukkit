@@ -1,4 +1,4 @@
-package net.minepay.plugin.bukkit.task;
+package com.minepay.plugin.bukkit.task;
 
 import javax.annotation.Nonnegative;
 

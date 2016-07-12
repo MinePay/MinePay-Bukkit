@@ -60,6 +60,7 @@ public class TelemetryTask implements Runnable {
             connection.setRequestProperty("Content-Type", "application/json;Charset=UTF-8");
             connection.setRequestProperty("User-Agent", "MinePay Bukkit Plugin (+https://www.minepay.com)");
             connection.setRequestProperty("X-ServerId", this.plugin.getConfiguration().getServerId());
+            connection.setDoOutput(true);
 
             try (OutputStream outputStream = connection.getOutputStream()) {
                 outputStream.write(submission.toEncodedObject().toJSONString().getBytes(StandardCharsets.UTF_8));

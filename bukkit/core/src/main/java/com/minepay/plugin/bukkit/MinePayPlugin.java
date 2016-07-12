@@ -6,6 +6,7 @@ import com.minepay.plugin.bukkit.command.MinePayCommandExecutor;
 import com.minepay.plugin.bukkit.task.TelemetryTask;
 import com.minepay.plugin.bukkit.task.TickAverageTask;
 import com.minepay.plugin.bukkit.task.TickCounterTask;
+import com.minepay.plugin.bukkit.telemetry.TelemetrySubmission;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -16,6 +17,7 @@ import java.util.logging.Level;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Provides an entry point to the MinePay Bukkit integration.
@@ -112,6 +114,16 @@ public class MinePayPlugin extends JavaPlugin {
         this.telemetryTaskId = -1;
 
         this.getLogger().info("Telemetry submission has been disabled");
+    }
+
+    /**
+     * Retrieves the most recent telemetry submission.
+     *
+     * @return a submission.
+     */
+    @Nullable
+    public TelemetrySubmission getLatestSubmission() {
+        return this.telemetryTask.getSubmission();
     }
 
     /**

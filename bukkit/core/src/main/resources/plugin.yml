@@ -4,6 +4,12 @@ descript: ${project.description}
 author: MinePay
 main: net.minepay.plugin.bukkit.MinePayPlugin
 prefix: MinePay
+commands:
+  minepay:
+    description: Provides methods of altering the MinePay plugin configuration.
+    aliases: [mp]
+  buy:
+    description: Displays the buy menu.
 permissions:
   minepay.administration:
     description: Grants access to the MinePay administration commands.

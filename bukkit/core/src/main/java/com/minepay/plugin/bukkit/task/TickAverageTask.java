@@ -50,7 +50,10 @@ public class TickAverageTask implements Runnable {
             int difference = newCount - this.lastTickCount;
             Duration duration = Duration.between(this.lastCalculation, newCalculation);
 
-            this.average = difference / (float) duration.getSeconds();
+            // Note: We are currently reducing the TPS accuracy down to only include two digits
+            // after the decimal point since everything beyond that point is irrelevant information
+            // from the user standpoint
+            this.average = Math.round(difference / (float) duration.toMillis() * 100000f) / 100f;
         }
 
         this.lastTickCount = newCount;

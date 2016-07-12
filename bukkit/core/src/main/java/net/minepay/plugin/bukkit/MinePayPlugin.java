@@ -68,8 +68,8 @@ public class MinePayPlugin extends JavaPlugin {
      * Disables the plugin functionality when the user temporarily disables synchronization or
      * chooses to un-register their server.
      *
-     * TODO: This method should also be called when the API becomes un-available for longer
-     * periods of time.
+     * TODO: This method should also be called when the API becomes un-available for longer periods
+     * of time.
      */
     public void disableFunctionality() {
         if (this.tickCounterTaskId != -1) {
@@ -115,6 +115,15 @@ public class MinePayPlugin extends JavaPlugin {
     @Nonnegative
     public float getTickAverage() {
         return this.tickAverageTask.getAverage();
+    }
+
+    /**
+     * Checks whether telemetry is currently active.
+     *
+     * @return true if enabled, false otherwise.
+     */
+    public boolean isTelemetryEnabled() {
+        return this.telemetryTaskId != -1 && this.configuration.isTelemetryEnabled();
     }
 
     /**

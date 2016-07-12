@@ -14,6 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.logging.Level;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Submits telemetry data to the MinePay servers for statistical purposes.
@@ -23,9 +24,20 @@ import javax.annotation.Nonnull;
 public class TelemetryTask implements Runnable {
     public static final String TELEMETRY_ENDPOINT_URL = "https://api.minepay.net/v1/telemetry";
     private final MinePayPlugin plugin;
+    private TelemetrySubmission submission;
 
     public TelemetryTask(@Nonnull MinePayPlugin plugin) {
         this.plugin = plugin;
+    }
+
+    /**
+     * Retrieves the last telemetry submission.
+     *
+     * @return a submission.
+     */
+    @Nullable
+    public TelemetrySubmission getSubmission() {
+        return this.submission;
     }
 
     /**
@@ -34,16 +46,16 @@ public class TelemetryTask implements Runnable {
     @Override
     @SuppressWarnings("deprecation") // Bukkit idiotism
     public void run() {
-        TelemetrySubmission submission = new TelemetrySubmission();
+        TelemetrySubmission.Builder builder = TelemetrySubmission.builder();
 
-        submission.addDatapoint(TelemetryDataPoint.createLong("ram-free", Runtime.getRuntime().freeMemory()));
-        submission.addDatapoint(TelemetryDataPoint.createLong("ram-max", Runtime.getRuntime().maxMemory()));
-        submission.addDatapoint(TelemetryDataPoint.createLong("ram-total", Runtime.getRuntime().totalMemory()));
+        builder.add(TelemetryDataPoint.createLong("ram-free", Runtime.getRuntime().freeMemory()));
+        builder.add(TelemetryDataPoint.createLong("ram-max", Runtime.getRuntime().maxMemory()));
+        builder.add(TelemetryDataPoint.createLong("ram-total", Runtime.getRuntime().totalMemory()));
+        builder.add(TelemetryDataPoint.createInteger("players-current", this.plugin.getBukkitBoilerplate().getOnlinePlayers().size()));
+        builder.add(TelemetryDataPoint.createFloat("tps", this.plugin.getTickAverage()));
 
-        submission.addDatapoint(TelemetryDataPoint.createInteger("players-current", this.plugin.getBukkitBoilerplate().getOnlinePlayers().size()));
-        // submission.addDatapoint(TelemetryDataPoint.createInteger("players-max", Bukkit.getServer().getMaxPlayers()));
-
-        submission.addDatapoint(TelemetryDataPoint.createFloat("tps", this.plugin.getTickAverage()));
+        TelemetrySubmission submission = builder.build();
+        this.submission = submission;
 
         Bukkit.getServer().getScheduler().scheduleAsyncDelayedTask(this.plugin, () -> this.submit(submission));
     }

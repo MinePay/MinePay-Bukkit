@@ -28,7 +28,7 @@ public interface BukkitBoilerplate {
     static BukkitBoilerplate getInstance() {
         Matcher matcher = VERSION_PATTERN.matcher(Bukkit.getBukkitVersion());
 
-        if (matcher.matches()) {
+        if (!matcher.matches()) {
             return new ModernBukkitBoilerplate();
         }
 

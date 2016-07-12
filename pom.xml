@@ -10,6 +10,10 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
     <!-- Artifact Metadata -->
     <name>MinePay Plugins</name>
     <description>Houses the MinePay server plugins, their resources and modules.</description>

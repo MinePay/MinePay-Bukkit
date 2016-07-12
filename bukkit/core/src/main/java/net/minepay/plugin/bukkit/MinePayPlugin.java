@@ -1,13 +1,19 @@
 package net.minepay.plugin.bukkit;
 
 import net.minepay.plugin.bukkit.boilerplate.BukkitBoilerplate;
+import net.minepay.plugin.bukkit.boilerplate.CraftBukkitBoilerplate;
+import net.minepay.plugin.bukkit.task.TelemetryTask;
+import net.minepay.plugin.bukkit.task.TickAverageTask;
+import net.minepay.plugin.bukkit.task.TickCounterTask;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Optional;
 import java.util.logging.Level;
 
+import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 
 /**
@@ -19,6 +25,19 @@ public class MinePayPlugin extends JavaPlugin {
     private final PluginConfiguration configuration = new PluginConfiguration();
     private final BukkitBoilerplate bukkitBoilerplate = BukkitBoilerplate.getInstance();
 
+    // we're storing an optional in this field in order to simplify code further down the road
+    // this is generally not recommended so please don't just adapt this in your plugins like a
+    // mindless zombie ...
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    private final Optional<CraftBukkitBoilerplate> craftBukkitBoilerplate = CraftBukkitBoilerplate.getInstance();
+
+    private final TickCounterTask tickCounterTask = new TickCounterTask();
+    private final TickAverageTask tickAverageTask = new TickAverageTask(this.tickCounterTask, this.craftBukkitBoilerplate.orElse(null));
+    private final TelemetryTask telemetryTask = new TelemetryTask(this);
+    private int tickCounterTaskId = -1;
+    private int tickAverageTaskId = -1;
+    private int telemetryTaskId = -1;
+
     @Nonnull
     public PluginConfiguration getConfiguration() {
         return this.configuration;
@@ -27,6 +46,74 @@ public class MinePayPlugin extends JavaPlugin {
     @Nonnull
     public BukkitBoilerplate getBukkitBoilerplate() {
         return this.bukkitBoilerplate;
+    }
+
+    @Nonnull
+    public Optional<CraftBukkitBoilerplate> getCraftBukkitBoilerplate() {
+        return this.craftBukkitBoilerplate;
+    }
+
+    /**
+     * Enables the plugin functionality as soon as the authentication information is available.
+     */
+    public void enableFunctionality() {
+        if (!this.craftBukkitBoilerplate.isPresent()) {
+            this.tickCounterTaskId = this.getServer().getScheduler().scheduleSyncRepeatingTask(this, this.tickCounterTask, 1, 1);
+        }
+
+        this.tickAverageTaskId = this.getServer().getScheduler().scheduleSyncRepeatingTask(this, this.tickAverageTask, 50, 25);
+    }
+
+    /**
+     * Disables the plugin functionality when the user temporarily disables synchronization or
+     * chooses to un-register their server.
+     *
+     * TODO: This method should also be called when the API becomes un-available for longer periods.
+     */
+    public void disableFunctionality() {
+        if (this.tickCounterTaskId != -1) {
+            this.getServer().getScheduler().cancelTask(this.tickCounterTaskId);
+            this.tickCounterTaskId = -1;
+        }
+
+        this.getServer().getScheduler().cancelTask(this.tickAverageTaskId);
+        this.tickAverageTaskId = -1;
+    }
+
+    /**
+     * Enables the submission of telemetry data.
+     */
+    public void enableTelemetry() {
+        if (this.telemetryTaskId != -1) {
+            return;
+        }
+
+        this.telemetryTaskId = this.getServer().getScheduler().scheduleSyncRepeatingTask(this, this.telemetryTask, 600, 600);
+        this.getLogger().info("Telemetry submission is now enabled");
+    }
+
+    /**
+     * Disables the submission of telemetry data.
+     */
+    public void disableTelemetry() {
+        if (this.telemetryTaskId == -1) {
+            return;
+        }
+
+        this.getServer().getScheduler().cancelTask(this.telemetryTaskId);
+        this.telemetryTaskId = -1;
+
+        this.getLogger().info("Telemetry submission has been disabled");
+    }
+
+    /**
+     * Retrieves the average amount of ticks processed in a second by the server.
+     *
+     * @return a tick average.
+     */
+    @Nonnegative
+    public float getTickAverage() {
+        return this.tickAverageTask.getAverage();
     }
 
     /**
@@ -63,6 +150,12 @@ public class MinePayPlugin extends JavaPlugin {
             this.getLogger().warning("| until you specify a server ID |");
             this.getLogger().warning("| using /mp serverId <serverId> |");
             this.getLogger().warning("+===============================+");
+        } else {
+            this.enableFunctionality();
+
+            if (this.configuration.isTelemetryEnabled()) {
+                this.enableTelemetry();
+            }
         }
     }
 

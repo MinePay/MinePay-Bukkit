@@ -37,7 +37,7 @@ public interface BukkitBoilerplate {
             int minor = Integer.parseUnsignedInt(matcher.group(2));
 
             if (major <= 1 && minor <= 7) {
-                return Class.forName("com.minepay.plugin.bukkit.boilerplate").asSubclass(BukkitBoilerplate.class).newInstance();
+                return Class.forName("com.minepay.plugin.bukkit.boilerplate.OutdatedBukkitBoilerplate").asSubclass(BukkitBoilerplate.class).newInstance();
             }
         } catch (NumberFormatException ignore) {
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {

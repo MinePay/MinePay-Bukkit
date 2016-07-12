@@ -39,8 +39,9 @@ public class MinePayCommandExecutor implements CommandExecutor {
                             sender.sendMessage("");
                         }
 
-                        sender.sendMessage(ChatColor.GREEN + "Usage: " + ChatColor.WHITE + "mp serverId <serverId>");
+                        sender.sendMessage(ChatColor.GREEN + "Usage: " + ChatColor.WHITE + label + " serverId <serverId>");
                         sender.sendMessage(ChatColor.GREEN + "Description: " + ChatColor.WHITE + "Registers the server with MinePay");
+                        sender.sendMessage("");
                         return true;
                     }
 
@@ -67,20 +68,25 @@ public class MinePayCommandExecutor implements CommandExecutor {
                                 this.plugin.disableTelemetry();
 
                                 sender.sendMessage("Telemetry has been " + ChatColor.RED + "disabled " + ChatColor.WHITE + "permanently");
+                                sender.sendMessage("");
                                 break;
                             case "enable":
                                 if (!this.plugin.getConfiguration().getServerId().isEmpty()) {
                                     this.plugin.enableTelemetry();
+                                    sender.sendMessage("Telemetry has been " + ChatColor.GREEN + "enabled " + ChatColor.WHITE + "temporarily");
                                 } else {
                                     sender.sendMessage(ChatColor.RED + "Server must be registered in order to enable telemetry");
                                 }
+                                sender.sendMessage("");
                                 break;
                             case "disable":
                                 if (!this.plugin.getConfiguration().getServerId().isEmpty()) {
                                     this.plugin.disableTelemetry();
+                                    sender.sendMessage("Telemetry has been " + ChatColor.RED + "disabled " + ChatColor.WHITE + "temporarily");
                                 } else {
                                     sender.sendMessage(ChatColor.RED + "Server must be registered in order to enable telemetry");
                                 }
+                                sender.sendMessage("");
                                 break;
                             default:
                                 sender.sendMessage(ChatColor.RED + "Unknown command");
@@ -91,7 +97,7 @@ public class MinePayCommandExecutor implements CommandExecutor {
                         sender.sendMessage("");
                     }
 
-                    sender.sendMessage(ChatColor.GREEN + "Usage: " + ChatColor.WHITE + "mp telemetry <command>");
+                    sender.sendMessage(ChatColor.GREEN + "Usage: " + ChatColor.WHITE +  label + " telemetry <command>");
                     sender.sendMessage(ChatColor.GREEN + "Description: " + ChatColor.WHITE + "En- or Disables telemetry");
                     sender.sendMessage("");
                     sender.sendMessage(ChatColor.GREEN + "Valid commands are:");
@@ -99,6 +105,7 @@ public class MinePayCommandExecutor implements CommandExecutor {
                     sender.sendMessage(ChatColor.GREEN + "    opt-out " + ChatColor.WHITE + "- Disables telemetry permanently");
                     sender.sendMessage(ChatColor.GREEN + "    enable " + ChatColor.WHITE + "- Temporarily enables telemetry");
                     sender.sendMessage(ChatColor.GREEN + "    disable " + ChatColor.WHITE + "- Temporarily disables telemetry");
+                    sender.sendMessage("");
                     return true;
                 default:
                     sender.sendMessage(ChatColor.RED + "Invalid Command");
@@ -118,13 +125,14 @@ public class MinePayCommandExecutor implements CommandExecutor {
         }
 
         sender.sendMessage("");
-        sender.sendMessage(ChatColor.GREEN + "Usage: " + ChatColor.WHITE + "mp <command> [arguments]");
+        sender.sendMessage(ChatColor.GREEN + "Usage: " + ChatColor.WHITE + label +" <command> [arguments]");
         sender.sendMessage("");
         sender.sendMessage(ChatColor.GREEN + "Valid commands are:");
         sender.sendMessage(ChatColor.GREEN + "    serverId " + ChatColor.WHITE + " - Registers the server with MinePay using its serverId");
         sender.sendMessage(ChatColor.GREEN + "    telemetry " + ChatColor.WHITE + " - En- or Disables telemetry");
         sender.sendMessage("");
         sender.sendMessage("Please contact MinePay support if you are experiencing any issues with this plugin");
+        sender.sendMessage("");
 
         return true;
     }

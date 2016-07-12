@@ -2,6 +2,7 @@ package net.minepay.plugin.bukkit;
 
 import net.minepay.plugin.bukkit.boilerplate.BukkitBoilerplate;
 import net.minepay.plugin.bukkit.boilerplate.CraftBukkitBoilerplate;
+import net.minepay.plugin.bukkit.command.MinePayCommandExecutor;
 import net.minepay.plugin.bukkit.task.TelemetryTask;
 import net.minepay.plugin.bukkit.task.TickAverageTask;
 import net.minepay.plugin.bukkit.task.TickCounterTask;
@@ -149,10 +150,15 @@ public class MinePayPlugin extends JavaPlugin {
                 this.configuration.save(this.getDataFolder().toPath());
             } catch (IOException e) {
                 this.getLogger().log(Level.SEVERE, "Could not save the plugin configuration file: " + e.getMessage(), e);
+                throw new RuntimeException("Could not save the plugin configuration file", e);
             }
         } catch (IOException ex) {
             this.getLogger().log(Level.SEVERE, "Could not load the plugin configuration file: " + ex.getMessage(), ex);
+            throw new RuntimeException("Could not load plugin configuration file", ex);
         }
+
+        // register command executors
+        this.getServer().getPluginCommand("minepay").setExecutor(new MinePayCommandExecutor(this));
 
         // warn user about missing configuration options
         if (this.configuration.getServerId().isEmpty()) {
@@ -177,5 +183,17 @@ public class MinePayPlugin extends JavaPlugin {
     @Override
     public void onDisable() {
         super.onDisable();
+    }
+
+    /**
+     * Attempts to save the configuration file back to disk and reports any errors that arise to the
+     * user via the server console.
+     */
+    public void saveConfiguration() {
+        try {
+            this.configuration.save(this.getDataFolder().toPath());
+        } catch (IOException ex) {
+            this.getLogger().log(Level.SEVERE, "Could not save plugin configuration file: " + ex.getMessage(), ex);
+        }
     }
 }

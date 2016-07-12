@@ -2,7 +2,7 @@ package com.minepay.plugin.bukkit;
 
 import com.minepay.plugin.bukkit.boilerplate.BukkitBoilerplate;
 import com.minepay.plugin.bukkit.boilerplate.CraftBukkitBoilerplate;
-import com.minepay.plugin.bukkit.command.MinePayCommandExecutor;
+import com.minepay.plugin.bukkit.command.ConfigurationCommandExecutor;
 import com.minepay.plugin.bukkit.task.TelemetryTask;
 import com.minepay.plugin.bukkit.task.TickAverageTask;
 import com.minepay.plugin.bukkit.task.TickCounterTask;
@@ -178,7 +178,7 @@ public class MinePayPlugin extends JavaPlugin {
         }
 
         // register command executors
-        this.getServer().getPluginCommand("minepay").setExecutor(new MinePayCommandExecutor(this));
+        this.getServer().getPluginCommand("minepay").setExecutor(new ConfigurationCommandExecutor(this));
 
         // warn user about missing configuration options
         if (this.configuration.getServerId().isEmpty()) {

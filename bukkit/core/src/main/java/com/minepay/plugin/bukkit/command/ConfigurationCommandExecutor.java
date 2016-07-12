@@ -20,11 +20,11 @@ import javax.annotation.Nonnull;
  *
  * @author <a href="mailto:johannesd@torchmind.com">Johannes Donath</a>
  */
-public class MinePayCommandExecutor implements CommandExecutor {
+public class ConfigurationCommandExecutor implements CommandExecutor {
     private final DateTimeFormatter TIMESTAMP_FORMAT = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM);
     private final MinePayPlugin plugin;
 
-    public MinePayCommandExecutor(@Nonnull MinePayPlugin plugin) {
+    public ConfigurationCommandExecutor(@Nonnull MinePayPlugin plugin) {
         this.plugin = plugin;
     }
 

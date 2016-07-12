@@ -16,7 +16,7 @@ import javax.annotation.Nonnull;
  * @author <a href="mailto:johannesd@torchmind.com">Johannes Donath</a>
  */
 public interface BukkitBoilerplate {
-    Pattern VERSION_PATTERN = Pattern.compile("^(\\d+)\\.(\\d+)\\.(\\d+)(.*)$");
+    Pattern VERSION_PATTERN = Pattern.compile("^(\\d+)\\.(\\d+)\\.(\\d+)\\-R((0.)?\\d)(\\-SNAPSHOT)?$", Pattern.CASE_INSENSITIVE);
 
     /**
      * Retrieves a Bukkit boilerplate instance which is designed to wrap the current server API
@@ -26,7 +26,7 @@ public interface BukkitBoilerplate {
      */
     @Nonnull
     static BukkitBoilerplate getInstance() {
-        Matcher matcher = VERSION_PATTERN.matcher(Bukkit.getVersion());
+        Matcher matcher = VERSION_PATTERN.matcher(Bukkit.getBukkitVersion());
 
         if (matcher.matches()) {
             return new ModernBukkitBoilerplate();

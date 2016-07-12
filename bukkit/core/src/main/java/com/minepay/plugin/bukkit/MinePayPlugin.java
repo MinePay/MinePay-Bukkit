@@ -140,6 +140,12 @@ public class MinePayPlugin extends JavaPlugin {
     public void onEnable() {
         super.onEnable();
 
+        // check for NMS compatibility
+        if (!this.craftBukkitBoilerplate.isPresent()) {
+            this.getLogger().warning("No NMS support is present - Disabling performance optimizations");
+            this.getLogger().warning("Please check for updates!");
+        }
+
         // load plugin configuration
         try {
             this.configuration.load(this.getDataFolder().toPath());

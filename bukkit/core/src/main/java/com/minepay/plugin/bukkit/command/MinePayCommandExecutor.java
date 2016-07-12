@@ -130,7 +130,7 @@ public class MinePayCommandExecutor implements CommandExecutor {
         sender.sendMessage(ChatColor.GREEN + "Usage: " + ChatColor.WHITE + label +" <command> [arguments]");
         sender.sendMessage("");
         sender.sendMessage(ChatColor.GREEN + "Valid commands are:");
-        sender.sendMessage(ChatColor.GREEN + "    serverId " + ChatColor.WHITE + " - Registers the server with MinePay using its serverId");
+        sender.sendMessage(ChatColor.GREEN + "    serverId " + ChatColor.WHITE + " - Registers the server with MinePay");
         sender.sendMessage(ChatColor.GREEN + "    telemetry " + ChatColor.WHITE + " - En- or Disables telemetry");
         sender.sendMessage("");
         sender.sendMessage("Please contact MinePay support if you are experiencing any issues with this plugin");

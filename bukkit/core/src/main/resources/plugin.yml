@@ -4,3 +4,24 @@ descript: ${project.description}
 author: MinePay
 main: net.minepay.plugin.bukkit.MinePayPlugin
 prefix: MinePay
+permissions:
+  minepay.administration:
+    description: Grants access to the MinePay administration commands.
+    default: op
+    children:
+      minepay.administration.configuration: true
+      minepay.administration.telemetry: true
+  minepay.administration.configuration:
+    description: Grants access to commands which alter the current plugin configuration.
+    default: op
+    children:
+      minepay.administration.configuration.serverId: true
+  minepay.administration.configuration.serverId:
+    description: Allows players to change the MinePay serverId using commands.
+    default: op
+  minepay.administration.telemetry:
+    description: Allows players to disable telemetry temporarily or permanently.
+    default: op
+  minepay.buy:
+    description: Allows players to access the buy menu.
+    default: true

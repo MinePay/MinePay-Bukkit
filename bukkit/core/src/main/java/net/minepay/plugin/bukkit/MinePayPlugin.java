@@ -62,6 +62,10 @@ public class MinePayPlugin extends JavaPlugin {
         }
 
         this.tickAverageTaskId = this.getServer().getScheduler().scheduleSyncRepeatingTask(this, this.tickAverageTask, 50, 25);
+
+        if (this.configuration.isTelemetryEnabled()) {
+            this.enableTelemetry();
+        }
     }
 
     /**
@@ -72,6 +76,8 @@ public class MinePayPlugin extends JavaPlugin {
      * of time.
      */
     public void disableFunctionality() {
+        this.disableTelemetry();
+
         if (this.tickCounterTaskId != -1) {
             this.getServer().getScheduler().cancelTask(this.tickCounterTaskId);
             this.tickCounterTaskId = -1;
@@ -162,10 +168,6 @@ public class MinePayPlugin extends JavaPlugin {
             this.getLogger().warning("+===============================+");
         } else {
             this.enableFunctionality();
-
-            if (this.configuration.isTelemetryEnabled()) {
-                this.enableTelemetry();
-            }
         }
     }
 

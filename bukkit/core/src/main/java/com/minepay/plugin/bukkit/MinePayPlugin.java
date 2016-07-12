@@ -147,6 +147,8 @@ public class MinePayPlugin extends JavaPlugin {
         }
 
         // load plugin configuration
+        this.getDataFolder().mkdirs();
+
         try {
             this.configuration.load(this.getDataFolder().toPath());
         } catch (FileNotFoundException ex) {

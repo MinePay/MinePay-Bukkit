@@ -17,7 +17,7 @@ public class PluginConfiguration {
     public static final String CONFIGURATION_FILE_NAME = "configuration.properties";
 
     private String serverId = "";
-    private boolean enableTelemetry = true;
+    private boolean telemetryEnabled = true;
 
     @Nonnull
     public String getServerId() {
@@ -28,12 +28,12 @@ public class PluginConfiguration {
         this.serverId = serverId;
     }
 
-    public boolean isEnableTelemetry() {
-        return this.enableTelemetry;
+    public boolean isTelemetryEnabled() {
+        return this.telemetryEnabled;
     }
 
-    public void setEnableTelemetry(boolean enableTelemetry) {
-        this.enableTelemetry = enableTelemetry;
+    public void setTelemetryEnabled(boolean telemetryEnabled) {
+        this.telemetryEnabled = telemetryEnabled;
     }
 
     /**
@@ -51,7 +51,7 @@ public class PluginConfiguration {
         }
 
         this.serverId = properties.getProperty("connection.serverId", "");
-        this.enableTelemetry = !Boolean.valueOf(properties.getProperty("telemetry.opt-out", "false"));
+        this.telemetryEnabled = !Boolean.valueOf(properties.getProperty("telemetry.opt-out", "false"));
     }
 
     /**
@@ -62,7 +62,7 @@ public class PluginConfiguration {
     public void save(@Nonnull Path baseDirectory) throws IOException {
         Properties properties = new Properties();
         properties.setProperty("connection.serverId", this.serverId);
-        properties.setProperty("telemetry.opt-out", Boolean.toString(!this.enableTelemetry));
+        properties.setProperty("telemetry.opt-out", Boolean.toString(!this.telemetryEnabled));
 
         try (FileOutputStream outputStream = new FileOutputStream(baseDirectory.resolve(CONFIGURATION_FILE_NAME).toFile())) {
             properties.store(outputStream, "");

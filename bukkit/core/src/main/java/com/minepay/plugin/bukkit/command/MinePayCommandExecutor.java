@@ -92,7 +92,7 @@ public class MinePayCommandExecutor implements CommandExecutor {
                     }
 
                     sender.sendMessage(ChatColor.GREEN + "Usage: " + ChatColor.WHITE + "mp telemetry <command>");
-                    sender.sendMessage(ChatColor.GREEN + "Description: En- or Disables telemetry");
+                    sender.sendMessage(ChatColor.GREEN + "Description: " + ChatColor.WHITE + "En- or Disables telemetry");
                     sender.sendMessage("");
                     sender.sendMessage(ChatColor.GREEN + "Valid commands are:");
                     sender.sendMessage(ChatColor.GREEN + "    opt-in " + ChatColor.WHITE + "- Enables telemetry permanently");

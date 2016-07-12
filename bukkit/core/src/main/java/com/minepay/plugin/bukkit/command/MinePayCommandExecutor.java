@@ -1,12 +1,17 @@
 package com.minepay.plugin.bukkit.command;
 
 import com.minepay.plugin.bukkit.MinePayPlugin;
+import com.minepay.plugin.bukkit.telemetry.TelemetryDataPoint;
+import com.minepay.plugin.bukkit.telemetry.TelemetrySubmission;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 
 import javax.annotation.Nonnull;
 
@@ -16,6 +21,7 @@ import javax.annotation.Nonnull;
  * @author <a href="mailto:johannesd@torchmind.com">Johannes Donath</a>
  */
 public class MinePayCommandExecutor implements CommandExecutor {
+    private final DateTimeFormatter TIMESTAMP_FORMAT = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM);
     private final MinePayPlugin plugin;
 
     public MinePayCommandExecutor(@Nonnull MinePayPlugin plugin) {
@@ -92,6 +98,45 @@ public class MinePayCommandExecutor implements CommandExecutor {
                                 }
                                 sender.sendMessage("");
                                 return true;
+                            case "latest":
+                                TelemetrySubmission submission = this.plugin.getLatestSubmission();
+
+                                if (submission != null) {
+                                    sender.sendMessage("The following telemetry report has been generated at " + ChatColor.GREEN + TIMESTAMP_FORMAT.format(submission.getGenerationTimestamp()) + ChatColor.WHITE + " and was submitted to the MinePay servers. If you wish to opt-out of this service, execute " + ChatColor.GREEN + "\"/" + label + " telemetry opt-out\"" + ChatColor.WHITE + " from your server console or the in-game chat. Please note, that disabling telemetry may interfere with some of the MinePay services.");
+                                    sender.sendMessage("");
+
+                                    for (TelemetryDataPoint dataPoint : submission) {
+                                        sender.sendMessage("--- " + ChatColor.GREEN + dataPoint.getName());
+
+                                        final String type;
+                                        final String value;
+
+                                        if (dataPoint instanceof TelemetryDataPoint.FloatDataPoint) {
+                                            type = "Float";
+                                            value = Float.toString(((TelemetryDataPoint.FloatDataPoint) dataPoint).getValue());
+                                        } else if (dataPoint instanceof TelemetryDataPoint.IntegerDataPoint) {
+                                            type = "Integer";
+                                            value = Integer.toString(((TelemetryDataPoint.IntegerDataPoint) dataPoint).getValue());
+                                        } else if (dataPoint instanceof TelemetryDataPoint.LongDataPoint) {
+                                            type = "Long";
+                                            value = Long.toString(((TelemetryDataPoint.LongDataPoint) dataPoint).getValue());
+                                        } else {
+                                            type = "Unknown";
+                                            value = "";
+                                        }
+
+                                        sender.sendMessage(ChatColor.GREEN + "Type: " + ChatColor.WHITE + type);
+                                        sender.sendMessage(ChatColor.GREEN + "Value: " + ChatColor.WHITE + value);
+                                        sender.sendMessage("");
+                                    }
+
+                                    sender.sendMessage(StringUtils.center(ChatColor.GRAY + " End of Report " + ChatColor.WHITE, 59, "-"));
+                                    return true;
+                                }
+
+                                sender.sendMessage(ChatColor.RED + "No telemetry has been sent since the plugin was loaded");
+                                sender.sendMessage("");
+                                return true;
                             default:
                                 sender.sendMessage(ChatColor.RED + "Unknown command");
                                 sender.sendMessage("");
@@ -109,6 +154,7 @@ public class MinePayCommandExecutor implements CommandExecutor {
                     sender.sendMessage(ChatColor.GREEN + "    opt-out " + ChatColor.WHITE + "- Disables telemetry permanently");
                     sender.sendMessage(ChatColor.GREEN + "    enable " + ChatColor.WHITE + "- Temporarily enables telemetry");
                     sender.sendMessage(ChatColor.GREEN + "    disable " + ChatColor.WHITE + "- Temporarily disables telemetry");
+                    sender.sendMessage(ChatColor.GREEN + "    latest " + ChatColor.WHITE + " - Retrieves the latest data set");
                     sender.sendMessage("");
                     return true;
                 default:

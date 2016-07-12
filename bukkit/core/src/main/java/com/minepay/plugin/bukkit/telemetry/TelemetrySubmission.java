@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -21,6 +22,7 @@ import javax.annotation.concurrent.ThreadSafe;
 @ThreadSafe
 public final class TelemetrySubmission implements Iterable<TelemetryDataPoint> {
     private final List<TelemetryDataPoint> dataPoints;
+    private final LocalDateTime generationTimestamp = LocalDateTime.now();
 
     private TelemetrySubmission(@Nonnull List<TelemetryDataPoint> dataPoints) {
         this.dataPoints = dataPoints;
@@ -34,6 +36,16 @@ public final class TelemetrySubmission implements Iterable<TelemetryDataPoint> {
     @Nonnull
     public static Builder builder() {
         return new Builder();
+    }
+
+    /**
+     * Retrieves the submission generation timestamp.
+     *
+     * @return an instant.
+     */
+    @Nonnull
+    public LocalDateTime getGenerationTimestamp() {
+        return this.generationTimestamp;
     }
 
     /**

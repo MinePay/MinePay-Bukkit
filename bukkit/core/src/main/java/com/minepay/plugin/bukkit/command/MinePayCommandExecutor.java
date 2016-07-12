@@ -30,6 +30,8 @@ public class MinePayCommandExecutor implements CommandExecutor {
             return false;
         }
 
+        sender.sendMessage("-----------------------------------------------------");
+
         if (args.length != 0) {
             switch (args[0].toLowerCase()) {
                 case "serverid":

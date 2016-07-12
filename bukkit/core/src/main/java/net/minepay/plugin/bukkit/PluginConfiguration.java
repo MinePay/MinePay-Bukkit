@@ -41,7 +41,7 @@ public class PluginConfiguration {
      * by the plugin or the server administrator.
      *
      * @param baseDirectory the storage base directory.
-     * @throws IOException when reading the
+     * @throws IOException when reading the configuration fails.
      */
     public void load(@Nonnull Path baseDirectory) throws IOException {
         Properties properties = new Properties();
@@ -58,6 +58,7 @@ public class PluginConfiguration {
      * Saves the current configuration options back to the file.
      *
      * @param baseDirectory the storage base directory.
+     * @throws IOException when saving the configuration fails.
      */
     public void save(@Nonnull Path baseDirectory) throws IOException {
         Properties properties = new Properties();

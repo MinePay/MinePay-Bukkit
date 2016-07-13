@@ -41,6 +41,10 @@
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+        </dependency>
     </dependencies>
 
     <!-- Build Settings -->

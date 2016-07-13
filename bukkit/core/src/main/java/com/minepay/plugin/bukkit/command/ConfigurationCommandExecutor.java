@@ -58,6 +58,9 @@ public class ConfigurationCommandExecutor implements CommandExecutor {
                     // FIXME: serverIds should be verified before assuming that they work correctly
 
                     this.plugin.getConfiguration().setServerId(args[1]);
+                    this.plugin.enableFunctionality();
+                    sender.sendMessage("The server has been registered " + ChatColor.GREEN + "successfully");
+                    sender.sendMessage("");
                     return true;
                 case "telemetry":
                     if (args.length == 2) {

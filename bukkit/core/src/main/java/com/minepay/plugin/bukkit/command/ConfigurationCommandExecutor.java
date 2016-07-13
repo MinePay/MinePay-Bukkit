@@ -49,8 +49,18 @@ public class ConfigurationCommandExecutor implements CommandExecutor {
                             sender.sendMessage("");
                         }
 
-                        sender.sendMessage(ChatColor.GREEN + "Usage: " + ChatColor.WHITE + label + " serverId <serverId>");
+                        sender.sendMessage(ChatColor.GREEN + "Usage: " + ChatColor.WHITE + label + " serverId <serverId|clear>");
                         sender.sendMessage(ChatColor.GREEN + "Description: " + ChatColor.WHITE + "Registers the server with MinePay");
+                        sender.sendMessage("");
+                        return true;
+                    }
+
+                    if ("clear".equals(args[1])) {
+                        this.plugin.disableFunctionality();
+                        this.plugin.getConfiguration().setServerId("");
+                        this.plugin.saveConfiguration();
+
+                        sender.sendMessage("The server has been " + ChatColor.RED + "un-registered");
                         sender.sendMessage("");
                         return true;
                     }
@@ -59,6 +69,8 @@ public class ConfigurationCommandExecutor implements CommandExecutor {
 
                     this.plugin.getConfiguration().setServerId(args[1]);
                     this.plugin.enableFunctionality();
+                    this.plugin.saveConfiguration();
+
                     sender.sendMessage("The server has been registered " + ChatColor.GREEN + "successfully");
                     sender.sendMessage("");
                     return true;

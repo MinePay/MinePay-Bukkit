@@ -7,11 +7,16 @@ import com.minepay.plugin.bukkit.task.TelemetryTask;
 import com.minepay.plugin.bukkit.task.TickAverageTask;
 import com.minepay.plugin.bukkit.task.TickCounterTask;
 import com.minepay.plugin.bukkit.telemetry.Submission;
+import com.zaxxer.hikari.HikariDataSource;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Optional;
 import java.util.logging.Level;
 
@@ -34,6 +39,7 @@ public class MinePayPlugin extends JavaPlugin {
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     private final Optional<CraftBukkitBoilerplate> craftBukkitBoilerplate = CraftBukkitBoilerplate.getInstance();
 
+    private HikariDataSource dataSource;
     private final TickCounterTask tickCounterTask = new TickCounterTask();
     private final TickAverageTask tickAverageTask = new TickAverageTask(this.tickCounterTask, this.craftBukkitBoilerplate.orElse(null));
     private final TelemetryTask telemetryTask = new TelemetryTask(this);
@@ -47,6 +53,11 @@ public class MinePayPlugin extends JavaPlugin {
     }
 
     @Nonnull
+    public HikariDataSource getDataSource() {
+        return this.dataSource;
+    }
+
+    @Nonnull
     public BukkitBoilerplate getBukkitBoilerplate() {
         return this.bukkitBoilerplate;
     }
@@ -54,6 +65,32 @@ public class MinePayPlugin extends JavaPlugin {
     @Nonnull
     public Optional<CraftBukkitBoilerplate> getCraftBukkitBoilerplate() {
         return this.craftBukkitBoilerplate;
+    }
+
+    /**
+     * Creates the initial database schema.
+     */
+    private void createDatabaseSchema() {
+        this.getLogger().info("No command queue database found - Creating a new schema");
+
+        try (Connection connection = this.getDataSource().getConnection()) {
+            connection.setAutoCommit(false);
+
+            try (Statement stmt = connection.createStatement()) {
+                stmt.addBatch(
+                    "CREATE TABLE command_queue (" +
+                        "template TEXT NOT NULL," +
+                        "profileId VARCHAR(36) NOT NULL" +
+                    ")"
+                );
+
+                stmt.executeBatch();
+            }
+
+            connection.commit();
+        } catch (SQLException ex) {
+            throw new RuntimeException("Could not create initial database schema: " + ex.getMessage(), ex);
+        }
     }
 
     /**
@@ -160,6 +197,18 @@ public class MinePayPlugin extends JavaPlugin {
 
         // load plugin configuration
         this.getDataFolder().mkdirs();
+        boolean databaseCreated = Files.exists(this.getDataFolder().toPath().resolve("queue.db"));
+
+        this.dataSource = new HikariDataSource();
+        this.dataSource.setDriverClassName("org.sqlite.JDBC");
+        this.dataSource.setConnectionTestQuery("SELECT 1");
+        this.dataSource.setJdbcUrl("jdbc:sqlite:/" + this.getDataFolder().toPath().resolve("queue.db").toAbsolutePath().toString());
+        this.dataSource.setUsername("minepay");
+        this.dataSource.setPassword("storage");
+
+        if (!databaseCreated) {
+            this.createDatabaseSchema();
+        }
 
         try {
             this.configuration.load(this.getDataFolder().toPath());
@@ -203,6 +252,8 @@ public class MinePayPlugin extends JavaPlugin {
     @Override
     public void onDisable() {
         super.onDisable();
+
+        this.dataSource.close();
     }
 
     /**

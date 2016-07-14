@@ -29,6 +29,47 @@ public class ConfigurationCommandExecutor implements CommandExecutor {
     }
 
     /**
+     * Prints a localized message to the console.
+     *
+     * @param sender    a sender.
+     * @param key       a key.
+     * @param arguments a set of arguments.
+     */
+    private void printLocalized(@Nonnull CommandSender sender, @Nonnull String key, @Nonnull Object... arguments) {
+        sender.sendMessage(this.plugin.getLocalizationManager().get(key, arguments));
+    }
+
+    /**
+     * Prints the command usage.
+     *
+     * @param sender      a sender.
+     * @param usage       a usage string.
+     * @param description a command description.
+     */
+    private void printUsage(@Nonnull CommandSender sender, @Nonnull String usage, @Nonnull String description) {
+        sender.sendMessage(this.plugin.getLocalizationManager().get("command.usage", usage));
+        sender.sendMessage(this.plugin.getLocalizationManager().get("command.description", this.plugin.getLocalizationManager().get(description)));
+        sender.sendMessage("");
+    }
+
+    /**
+     * Prints a list of valid sub commands.
+     *
+     * @param sender   a command sender.
+     * @param elements a set of commands and their descriptions.
+     */
+    private void printSubCommands(@Nonnull CommandSender sender, @Nonnull String... elements) {
+        if ((elements.length % 2) == 1) {
+            throw new IllegalArgumentException("Cannot print command without description");
+        }
+
+        this.printLocalized(sender, "command.subcommands");
+        for (int i = 0; i < elements.length; i += 2) {
+            sender.sendMessage("    " + ChatColor.GREEN + elements[i] + ChatColor.WHITE + " - " + this.plugin.getLocalizationManager().get(elements[i + 1]));
+        }
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -45,13 +86,11 @@ public class ConfigurationCommandExecutor implements CommandExecutor {
                 case "serverid":
                     if (args.length == 1 || args.length > 2) {
                         if (args.length > 2) {
-                            sender.sendMessage(ChatColor.RED + "Too many arguments");
-                            sender.sendMessage("");
+                            this.printLocalized(sender, "command.arguments.many");
+                            return true;
                         }
 
-                        sender.sendMessage(ChatColor.GREEN + "Usage: " + ChatColor.WHITE + label + " serverId <serverId|clear>");
-                        sender.sendMessage(ChatColor.GREEN + "Description: " + ChatColor.WHITE + "Registers the server with MinePay");
-                        sender.sendMessage("");
+                        this.printUsage(sender, "/" + label + " serverId <serverId|clear>", "command.mp.serverId.description");
                         return true;
                     }
 
@@ -60,8 +99,7 @@ public class ConfigurationCommandExecutor implements CommandExecutor {
                         this.plugin.getConfiguration().setServerId("");
                         this.plugin.saveConfiguration();
 
-                        sender.sendMessage("The server has been " + ChatColor.RED + "un-registered");
-                        sender.sendMessage("");
+                        this.printLocalized(sender, "configuration.serverId.clear");
                         return true;
                     }
 
@@ -71,8 +109,7 @@ public class ConfigurationCommandExecutor implements CommandExecutor {
                     this.plugin.enableFunctionality();
                     this.plugin.saveConfiguration();
 
-                    sender.sendMessage("The server has been registered " + ChatColor.GREEN + "successfully");
-                    sender.sendMessage("");
+                    this.printLocalized(sender, "configuration.serverId.success");
                     return true;
                 case "telemetry":
                     if (args.length == 2) {
@@ -85,39 +122,36 @@ public class ConfigurationCommandExecutor implements CommandExecutor {
                                     this.plugin.enableTelemetry();
                                 }
 
-                                sender.sendMessage("Telemetry has been " + ChatColor.GREEN + "enabled " + ChatColor.WHITE + "permanently");
+                                this.printLocalized(sender, "configuration.telemetry.opt-in");
                                 return true;
                             case "opt-out":
                                 this.plugin.getConfiguration().setTelemetryEnabled(false);
                                 this.plugin.saveConfiguration();
                                 this.plugin.disableTelemetry();
 
-                                sender.sendMessage("Telemetry has been " + ChatColor.RED + "disabled " + ChatColor.WHITE + "permanently");
-                                sender.sendMessage("");
+                                this.printLocalized(sender, "configuration.telemetry.opt-out");
                                 return true;
                             case "enable":
                                 if (!this.plugin.getConfiguration().getServerId().isEmpty()) {
                                     this.plugin.enableTelemetry();
-                                    sender.sendMessage("Telemetry has been " + ChatColor.GREEN + "enabled " + ChatColor.WHITE + "temporarily");
+                                    this.printLocalized(sender, "configuration.telemetry.enable");
                                 } else {
-                                    sender.sendMessage(ChatColor.RED + "Server must be registered in order to enable telemetry");
+                                    this.printLocalized(sender, "warning.configuration.unregistered");
                                 }
-                                sender.sendMessage("");
                                 return true;
                             case "disable":
                                 if (!this.plugin.getConfiguration().getServerId().isEmpty()) {
                                     this.plugin.disableTelemetry();
-                                    sender.sendMessage("Telemetry has been " + ChatColor.RED + "disabled " + ChatColor.WHITE + "temporarily");
+                                    this.printLocalized(sender, "configuration.telemetry.disable");
                                 } else {
-                                    sender.sendMessage(ChatColor.RED + "Server must be registered in order to enable telemetry");
+                                    this.printLocalized(sender, "warning.configuration.unregistered");
                                 }
-                                sender.sendMessage("");
                                 return true;
                             case "latest":
                                 Submission submission = this.plugin.getLatestSubmission();
 
                                 if (submission != null) {
-                                    sender.sendMessage("The following telemetry report has been generated at " + ChatColor.GREEN + TIMESTAMP_FORMAT.format(submission.getGenerationTimestamp()) + ChatColor.WHITE + " and was submitted to the MinePay servers. If you wish to opt-out of this service, execute " + ChatColor.GREEN + "\"/" + label + " telemetry opt-out\"" + ChatColor.WHITE + " from your server console or the in-game chat. Please note, that disabling telemetry may interfere with some of the MinePay services.");
+                                    this.printLocalized(sender, "configuration.telemetry.latest.header", TIMESTAMP_FORMAT.format(submission.getGenerationTimestamp()));
                                     sender.sendMessage("");
 
                                     for (DataPoint dataPoint : submission) {
@@ -126,6 +160,7 @@ public class ConfigurationCommandExecutor implements CommandExecutor {
                                         final String type;
                                         final String value;
 
+                                        // TODO: Localization
                                         if (dataPoint instanceof DataPoint.FloatDataPoint) {
                                             type = "Float";
                                             value = Float.toString(((DataPoint.FloatDataPoint) dataPoint).getValue());
@@ -145,55 +180,47 @@ public class ConfigurationCommandExecutor implements CommandExecutor {
                                         sender.sendMessage("");
                                     }
 
-                                    sender.sendMessage(StringUtils.center(ChatColor.GRAY + " End of Report " + ChatColor.WHITE, 59, "-"));
+                                    sender.sendMessage(StringUtils.center(this.plugin.getLocalizationManager().get("configuration.telemetry.latest.end"), 59, "-"));
                                     return true;
                                 }
 
-                                sender.sendMessage(ChatColor.RED + "No telemetry has been sent since the plugin was loaded");
-                                sender.sendMessage("");
+                                this.printLocalized(sender, "configuration.telemetry.latest.no-data");
                                 return true;
                             default:
-                                sender.sendMessage(ChatColor.RED + "Unknown command");
-                                sender.sendMessage("");
+                                this.printLocalized(sender, "command.unknown");
                         }
                     } else if (args.length > 2) {
-                        sender.sendMessage(ChatColor.RED + "Too many arguments");
-                        sender.sendMessage("");
+                        this.printLocalized(sender, "command.arguments.many");
                     }
 
-                    sender.sendMessage(ChatColor.GREEN + "Usage: " + ChatColor.WHITE +  label + " telemetry <command>");
-                    sender.sendMessage(ChatColor.GREEN + "Description: " + ChatColor.WHITE + "En- or Disables telemetry");
-                    sender.sendMessage("");
-                    sender.sendMessage(ChatColor.GREEN + "Valid commands are:");
-                    sender.sendMessage(ChatColor.GREEN + "    opt-in " + ChatColor.WHITE + "- Enables telemetry permanently");
-                    sender.sendMessage(ChatColor.GREEN + "    opt-out " + ChatColor.WHITE + "- Disables telemetry permanently");
-                    sender.sendMessage(ChatColor.GREEN + "    enable " + ChatColor.WHITE + "- Temporarily enables telemetry");
-                    sender.sendMessage(ChatColor.GREEN + "    disable " + ChatColor.WHITE + "- Temporarily disables telemetry");
-                    sender.sendMessage(ChatColor.GREEN + "    latest " + ChatColor.WHITE + " - Retrieves the latest data set");
-                    sender.sendMessage("");
+                    this.printUsage(sender, "/" + label + " telemetry <command>", "command.mp.telemetry.description");
+                    this.printSubCommands(
+                            sender,
+                            "opt-in", "command.mp.telemetry.opt-in.description",
+                            "opt-out", "command.mp.telemetry.opt-out.description",
+                            "enable", "command.mp.telemetry.enable.description",
+                            "disable", "command.mp.telemetry.disable.description",
+                            "latest", "command.mp.telemetry.latest.description"
+                    );
                     return true;
                 default:
-                    sender.sendMessage(ChatColor.RED + "Invalid Command");
-                    sender.sendMessage("");
+                    this.printLocalized(sender, "command.unknown");
             }
         }
 
         if (!this.plugin.getConfiguration().getServerId().isEmpty()) {
-            sender.sendMessage(ChatColor.GREEN + "Server ID: " + ChatColor.WHITE + this.plugin.getConfiguration().getServerId());
-            sender.sendMessage(ChatColor.GREEN + "Average TPS: " + ChatColor.WHITE + this.plugin.getTickAverage());
-            sender.sendMessage("Telemetry is " + (this.plugin.isTelemetryEnabled() ? ChatColor.GREEN + "enabled" + ChatColor.WHITE : ChatColor.RED + "disabled" + ChatColor.WHITE));
-        } else {
-            sender.sendMessage(ChatColor.RED + "This server has not been registered yet");
+            this.printLocalized(sender, "command.mp.state.serverId", this.plugin.getConfiguration().getServerId());
+            this.printLocalized(sender, "command.mp.state.tps", this.plugin.getTickAverage());
+            this.printLocalized(sender, "command.mp.state.telemetry." + (this.plugin.isTelemetryEnabled() ? "enabled" : "disabled"));
+            sender.sendMessage("");
         }
 
-        sender.sendMessage("");
-        sender.sendMessage(ChatColor.GREEN + "Usage: " + ChatColor.WHITE + label +" <command> [arguments]");
-        sender.sendMessage("");
-        sender.sendMessage(ChatColor.GREEN + "Valid commands are:");
-        sender.sendMessage(ChatColor.GREEN + "    serverId " + ChatColor.WHITE + " - Registers the server with MinePay");
-        sender.sendMessage(ChatColor.GREEN + "    telemetry " + ChatColor.WHITE + " - En- or Disables telemetry");
-        sender.sendMessage("");
-
+        this.printUsage(sender, "/" + label, "command.mp.description");
+        this.printSubCommands(
+                sender,
+                "serverId", "command.mp.serverId.description",
+                "telemetry", "command.mp.telemetry.description"
+        );
         return true;
     }
 }

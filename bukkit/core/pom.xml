@@ -71,6 +71,15 @@
                     <include>plugin.yml</include>
                 </includes>
             </resource>
+            <resource>
+                <directory>${project.basedir}/src/main/resources/localization</directory>
+                <targetPath>./localization</targetPath>
+                <filtering>true</filtering>
+
+                <includes>
+                    <include>minepay_*.properties</include>
+                </includes>
+            </resource>
         </resources>
 
         <plugins>

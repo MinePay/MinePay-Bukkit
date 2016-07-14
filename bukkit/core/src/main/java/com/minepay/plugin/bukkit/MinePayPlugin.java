@@ -9,6 +9,9 @@ import com.minepay.plugin.bukkit.task.TickCounterTask;
 import com.minepay.plugin.bukkit.telemetry.Submission;
 import com.zaxxer.hikari.HikariDataSource;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.WordUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.FileNotFoundException;
@@ -31,6 +34,7 @@ import javax.annotation.Nullable;
  */
 public class MinePayPlugin extends JavaPlugin {
     private final PluginConfiguration configuration = new PluginConfiguration();
+    private final LocalizationManager localizationManager = new LocalizationManager(this);
     private final BukkitBoilerplate bukkitBoilerplate = BukkitBoilerplate.getInstance();
 
     // we're storing an optional in this field in order to simplify code further down the road
@@ -38,14 +42,18 @@ public class MinePayPlugin extends JavaPlugin {
     // mindless zombie ...
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     private final Optional<CraftBukkitBoilerplate> craftBukkitBoilerplate = CraftBukkitBoilerplate.getInstance();
-
-    private HikariDataSource dataSource;
     private final TickCounterTask tickCounterTask = new TickCounterTask();
     private final TickAverageTask tickAverageTask = new TickAverageTask(this.tickCounterTask, this.craftBukkitBoilerplate.orElse(null));
     private final TelemetryTask telemetryTask = new TelemetryTask(this);
+    private HikariDataSource dataSource;
     private int tickCounterTaskId = -1;
     private int tickAverageTaskId = -1;
     private int telemetryTaskId = -1;
+
+    @Nonnull
+    public LocalizationManager getLocalizationManager() {
+        return this.localizationManager;
+    }
 
     @Nonnull
     public PluginConfiguration getConfiguration() {
@@ -78,10 +86,10 @@ public class MinePayPlugin extends JavaPlugin {
 
             try (Statement stmt = connection.createStatement()) {
                 stmt.addBatch(
-                    "CREATE TABLE command_queue (" +
-                        "template TEXT NOT NULL," +
-                        "profileId VARCHAR(36) NOT NULL" +
-                    ")"
+                        "CREATE TABLE command_queue (" +
+                                "template TEXT NOT NULL," +
+                                "profileId VARCHAR(36) NOT NULL" +
+                                ")"
                 );
 
                 stmt.executeBatch();
@@ -189,12 +197,6 @@ public class MinePayPlugin extends JavaPlugin {
     public void onEnable() {
         super.onEnable();
 
-        // check for NMS compatibility
-        if (!this.craftBukkitBoilerplate.isPresent()) {
-            this.getLogger().warning("No NMS support is present - Disabling performance optimizations");
-            this.getLogger().warning("Please check for updates!");
-        }
-
         // load plugin configuration
         this.getDataFolder().mkdirs();
         boolean databaseCreated = Files.exists(this.getDataFolder().toPath().resolve("queue.db"));
@@ -226,23 +228,28 @@ public class MinePayPlugin extends JavaPlugin {
             throw new RuntimeException("Could not load plugin configuration file", ex);
         }
 
+        this.localizationManager.setLocale(this.configuration.getLocale());
+
         // register command executors
         this.getServer().getPluginCommand("minepay").setExecutor(new ConfigurationCommandExecutor(this));
 
         // warn user about missing configuration options
         if (this.configuration.getServerId().isEmpty()) {
-            this.getLogger().warning("+===============================+");
-            this.getLogger().warning("| No Server Configuration       |");
-            this.getLogger().warning("+===============================+");
-            this.getLogger().warning("| You did not specify any       |");
-            this.getLogger().warning("| server identification yet!    |");
-            this.getLogger().warning("|                               |");
-            this.getLogger().warning("| The plugin will not work      |");
-            this.getLogger().warning("| until you specify a server ID |");
-            this.getLogger().warning("| using /mp serverId <serverId> |");
-            this.getLogger().warning("+===============================+");
+            String[] message = WordUtils.wrap(this.localizationManager.get("warning.startup.unregistered"), 42).replace("\r", "").split("\n");
+            this.getLogger().warning("+--------------------------------------------+");
+
+            for (String line : message) {
+                this.getLogger().warning("| " + StringUtils.rightPad(line, 42) + " |");
+            }
+
+            this.getLogger().warning("+--------------------------------------------+");
         } else {
             this.enableFunctionality();
+        }
+
+        // check for NMS compatibility
+        if (!this.craftBukkitBoilerplate.isPresent()) {
+            this.getLogger().warning(this.localizationManager.get("warning.startup.nms", Bukkit.getBukkitVersion()));
         }
     }
 

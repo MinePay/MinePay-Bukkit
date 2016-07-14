@@ -105,11 +105,13 @@ public class MinePayPlugin extends JavaPlugin {
      * Enables the plugin functionality as soon as the authentication information is available.
      */
     public void enableFunctionality() {
-        if (!this.craftBukkitBoilerplate.isPresent()) {
+        if (!this.craftBukkitBoilerplate.isPresent() && this.tickCounterTaskId == -1) {
             this.tickCounterTaskId = this.getServer().getScheduler().scheduleSyncRepeatingTask(this, this.tickCounterTask, 1, 1);
         }
 
-        this.tickAverageTaskId = this.getServer().getScheduler().scheduleSyncRepeatingTask(this, this.tickAverageTask, 50, 25);
+        if (this.tickAverageTaskId == -1) {
+            this.tickAverageTaskId = this.getServer().getScheduler().scheduleSyncRepeatingTask(this, this.tickAverageTask, 50, 25);
+        }
 
         if (this.configuration.isTelemetryEnabled()) {
             this.enableTelemetry();

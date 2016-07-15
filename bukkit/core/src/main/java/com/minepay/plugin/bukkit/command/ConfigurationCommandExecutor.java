@@ -149,7 +149,7 @@ public class ConfigurationCommandExecutor extends SimpleCommandExecutor {
         sender.sendMessage(StringUtils.center(ChatColor.GREEN + " MinePay " + (version != null ? "v" + version : "(Development Snapshot)") + " " + ChatColor.WHITE, 59, "-"));
 
         if (arguments.length == 0 && !this.getPlugin().getConfiguration().getServerId().isEmpty()) {
-            this.printLocalized(sender, "command.minepay.state.serverId", this.getPlugin().getConfiguration().getServerId());
+            this.printLocalized(sender, "command.minepay.state.serverId", StringUtils.overlay(this.getPlugin().getConfiguration().getServerId(), "******", (this.getPlugin().getConfiguration().getServerId().length() - 7), this.getPlugin().getConfiguration().getServerId().length()));
             this.printLocalized(sender, "command.minepay.state.tps", this.getPlugin().getTickAverage());
             this.printLocalized(sender, "command.minepay.state.telemetry." + (this.getPlugin().isTelemetryEnabled() ? "enabled" : "disabled"));
             sender.sendMessage("");

@@ -97,7 +97,7 @@ public class ConfigurationCommandExecutor extends SimpleCommandExecutor {
                 Submission submission = this.getPlugin().getLatestSubmission();
 
                 if (submission != null) {
-                    this.printLocalized(sender, "configuration.telemetry.latest.header", TIMESTAMP_FORMAT.format(submission.getGenerationTimestamp()));
+                    this.printLocalized(sender, "configuration.telemetry.latest.header", TIMESTAMP_FORMAT.format(submission.getGenerationTimestamp()), label);
                     sender.sendMessage("");
 
                     for (DataPoint dataPoint : submission) {

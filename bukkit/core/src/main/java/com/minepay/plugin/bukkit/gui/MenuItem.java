@@ -1,7 +1,7 @@
 package com.minepay.plugin.bukkit.gui;
 
-import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryAction;
+import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nonnull;
 
@@ -11,16 +11,20 @@ import javax.annotation.Nonnull;
  *
  * @author <a href="mailto:johannesd@torchmind.com">Johannes Donath</a>
  */
-public class MenuItem {
-    private final Material material;
+public abstract class MenuItem {
+    private final ItemStack icon;
 
-    public MenuItem(@Nonnull Material material) {
-        this.material = material;
+    public MenuItem(@Nonnull ItemStack icon) {
+        this.icon = icon;
     }
 
-    @Nonnull
-    public Material getMaterial() {
-        return this.material;
+    /**
+     * Retrieves the item stack which represents this menu item's icon.
+     *
+     * @return an item stack.
+     */
+    public ItemStack getIcon() {
+        return this.icon;
     }
 
     /**

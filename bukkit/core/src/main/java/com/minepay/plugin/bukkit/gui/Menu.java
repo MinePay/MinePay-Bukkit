@@ -67,7 +67,7 @@ public class Menu {
      */
     public void add(@Nonnegative int slot, @Nonnull MenuItem item) {
         this.items[slot] = item;
-        this.inventory.setItem(slot, new ItemStack(item.getMaterial(), 1));
+        this.inventory.setItem(slot, item.getIcon());
     }
 
     /**
@@ -76,9 +76,23 @@ public class Menu {
      * @param slot     a slot number.
      * @param material a material.
      * @param handler  a handler.
+     * @return a menu item.
      */
     public MenuItem add(@Nonnegative int slot, @Nonnull Material material, @Nonnull BiConsumer<MenuItem, InventoryAction> handler) {
-        MenuItem item = new MenuItem(material) {
+        return this.add(slot, new ItemStack(material, 1), handler);
+    }
+
+    /**
+     * Adds a new item to the menu.
+     *
+     * @param slot    a slot number.
+     * @param icon    an icon.
+     * @param handler a handler.
+     * @return a menu item.
+     */
+    @Nonnull
+    public MenuItem add(@Nonnegative int slot, @Nonnull ItemStack icon, @Nonnull BiConsumer<MenuItem, InventoryAction> handler) {
+        MenuItem item = new MenuItem(icon) {
             @Override
             public void onClick(@Nonnull InventoryAction action) {
                 handler.accept(this, action);

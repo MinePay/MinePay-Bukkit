@@ -63,8 +63,17 @@ public class MenuManager implements Listener {
     @Nonnull
     public Menu create(@Nonnull Player player, @Nonnull Inventory inventory) {
         Menu menu = new Menu(this, player, inventory);
-        this.menuMap.put(inventory, menu);
+        this.add(menu);
         return menu;
+    }
+
+    /**
+     * Adds a menu to the manager.
+     *
+     * @param menu a menu.
+     */
+    public void add(@Nonnull Menu menu) {
+        this.menuMap.put(menu.getInventory(), menu);
     }
 
     /**

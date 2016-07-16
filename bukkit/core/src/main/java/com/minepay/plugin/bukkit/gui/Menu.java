@@ -33,6 +33,11 @@ public class Menu {
     }
 
     @Nonnull
+    Inventory getInventory() {
+        return this.inventory;
+    }
+
+    @Nonnull
     public Player getPlayer() {
         return this.player;
     }

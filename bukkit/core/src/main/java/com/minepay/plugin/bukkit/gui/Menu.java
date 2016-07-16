@@ -24,7 +24,7 @@ public class Menu {
     private final Inventory inventory;
     private final MenuItem[] items;
 
-    Menu(@Nonnull MenuManager manager, @Nonnull Player player, @Nonnull Inventory inventory) {
+    public Menu(@Nonnull MenuManager manager, @Nonnull Player player, @Nonnull Inventory inventory) {
         this.manager = manager;
         this.player = player;
         this.inventory = inventory;

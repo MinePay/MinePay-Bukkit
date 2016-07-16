@@ -32,6 +32,11 @@ public class Menu {
         this.items = new MenuItem[inventory.getSize()];
     }
 
+    @Nonnull
+    public Player getPlayer() {
+        return this.player;
+    }
+
     /**
      * Handles click events on certain menu items.
      *
@@ -133,6 +138,16 @@ public class Menu {
         if (this.player.getInventory() == this.inventory) {
             this.player.closeInventory();
         }
+    }
+
+    /**
+     * Retrieves the inventory size.
+     *
+     * @return a size.
+     */
+    @Nonnegative
+    public int getSize() {
+        return this.inventory.getSize();
     }
 
     /**

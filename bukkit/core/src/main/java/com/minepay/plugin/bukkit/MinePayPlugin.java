@@ -3,6 +3,10 @@ package com.minepay.plugin.bukkit;
 import com.minepay.plugin.bukkit.boilerplate.BukkitBoilerplate;
 import com.minepay.plugin.bukkit.boilerplate.CraftBukkitBoilerplate;
 import com.minepay.plugin.bukkit.command.ConfigurationCommandExecutor;
+import com.minepay.plugin.bukkit.gui.MenuManager;
+import com.minepay.plugin.bukkit.storefront.CartManager;
+import com.minepay.plugin.bukkit.storefront.Category;
+import com.minepay.plugin.bukkit.task.PackageTask;
 import com.minepay.plugin.bukkit.task.TelemetryTask;
 import com.minepay.plugin.bukkit.task.TickAverageTask;
 import com.minepay.plugin.bukkit.task.TickCounterTask;
@@ -20,6 +24,7 @@ import java.nio.file.Files;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
 
@@ -36,6 +41,8 @@ public class MinePayPlugin extends JavaPlugin {
     private final PluginConfiguration configuration = new PluginConfiguration();
     private final LocalizationManager localizationManager = new LocalizationManager(this);
     private final BukkitBoilerplate bukkitBoilerplate = BukkitBoilerplate.getInstance();
+    private final MenuManager menuManager = new MenuManager();
+    private final CartManager cartManager = new CartManager(this);
 
     // we're storing an optional in this field in order to simplify code further down the road
     // this is generally not recommended so please don't just adapt this in your plugins like a
@@ -45,10 +52,12 @@ public class MinePayPlugin extends JavaPlugin {
     private final TickCounterTask tickCounterTask = new TickCounterTask();
     private final TickAverageTask tickAverageTask = new TickAverageTask(this.tickCounterTask, this.craftBukkitBoilerplate.orElse(null));
     private final TelemetryTask telemetryTask = new TelemetryTask(this);
+    private PackageTask packageTask;
     private HikariDataSource dataSource;
     private int tickCounterTaskId = -1;
     private int tickAverageTaskId = -1;
     private int telemetryTaskId = -1;
+    private int packageTaskId = -1;
 
     @Nonnull
     public LocalizationManager getLocalizationManager() {
@@ -163,6 +172,30 @@ public class MinePayPlugin extends JavaPlugin {
         this.getLogger().info("Telemetry submission has been disabled");
     }
 
+    @Nonnull
+    public MenuManager getMenuManager() {
+        return this.menuManager;
+    }
+
+    @Nonnull
+    public CartManager getCartManager() {
+        return this.cartManager;
+    }
+
+    /**
+     * Retrieves a cached list of known store categories.
+     *
+     * @return a list of categories.
+     */
+    @Nullable
+    public List<Category> getCategories() {
+        if (this.packageTask == null) {
+            return null;
+        }
+
+        return this.packageTask.getCategories();
+    }
+
     /**
      * Retrieves the most recent telemetry submission.
      *
@@ -231,6 +264,10 @@ public class MinePayPlugin extends JavaPlugin {
         }
 
         this.localizationManager.setLocale(this.configuration.getLocale());
+
+        // register event handlers
+        this.getServer().getPluginManager().registerEvents(this.menuManager, this);
+        this.getServer().getPluginManager().registerEvents(this.cartManager, this);
 
         // register command executors
         this.getServer().getPluginCommand("minepay").setExecutor(new ConfigurationCommandExecutor(this));

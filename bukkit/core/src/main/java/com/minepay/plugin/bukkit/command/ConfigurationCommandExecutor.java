@@ -6,12 +6,23 @@ import com.minepay.plugin.bukkit.telemetry.DataPoint;
 import com.minepay.plugin.bukkit.telemetry.Submission;
 
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.util.logging.Level;
 
 import javax.annotation.Nonnull;
 
@@ -22,11 +33,13 @@ import javax.annotation.Nonnull;
  */
 public class ConfigurationCommandExecutor extends SimpleCommandExecutor {
     private final DateTimeFormatter TIMESTAMP_FORMAT = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM);
+    private final String METADATA_ENDPOINT_URL = "https://api.minepay.net/v1/metadata";
 
     public ConfigurationCommandExecutor(@Nonnull MinePayPlugin plugin) {
         super(plugin);
     }
 
+    @SuppressWarnings("deprecation")
     @CommandHandler(usage = "<serverId|clear>", subCommands = "clear")
     public void serverId(@Nonnull CommandSender sender, @Nonnull Command command, @Nonnull String label, @Nonnull String[] arguments) {
         if (arguments.length != 1) {
@@ -43,16 +56,51 @@ public class ConfigurationCommandExecutor extends SimpleCommandExecutor {
             return;
         }
 
-        // FIXME: serverIds should be verified before assuming that they work correctly
+        Bukkit.getScheduler().scheduleAsyncDelayedTask(this.getPlugin(), () -> {
+            try {
+                final JSONParser parser = new JSONParser();
+                HttpURLConnection connection = (HttpURLConnection) new URL(METADATA_ENDPOINT_URL).openConnection();
 
-        this.getPlugin().getConfiguration().setServerId(arguments[0]);
-        this.getPlugin().enableFunctionality();
-        this.getPlugin().saveConfiguration();
+                final JSONObject object;
+                final int responseCode = connection.getResponseCode();
 
-        this.printLocalized(sender, "configuration.serverId.success");
+                if (responseCode != 200) {
+                    object = null;
+                } else {
+                    try (InputStream inputStream = connection.getInputStream()) {
+                        try (InputStreamReader reader = new InputStreamReader(inputStream)) {
+                            object = (JSONObject) parser.parse(reader);
+                        }
+                    }
+                }
+
+                Bukkit.getScheduler().scheduleSyncDelayedTask(this.getPlugin(), () -> {
+                    if (responseCode == 401 || responseCode == 403) {
+                        sender.sendMessage(this.getPlugin().getLocalizationManager().get("command.minepay.serverid.invalid"));
+                    } else if (responseCode >= 500) {
+                        sender.sendMessage(this.getPlugin().getLocalizationManager().get("error.remote.unavailable"));
+                    } else if (responseCode != 200) {
+                        sender.sendMessage(this.getPlugin().getLocalizationManager().get("error.remote.unknown"));
+                    } else {
+                        JSONArray array = (JSONArray) object.get("stores");
+
+                        this.getPlugin().getConfiguration().setServerId(arguments[0]);
+                        this.getPlugin().getConfiguration().setStoreName((String) array.get(0));
+
+                        this.getPlugin().enableFunctionality();
+                        this.getPlugin().saveConfiguration();
+
+                        this.printLocalized(sender, "configuration.serverId.success");
+                    }
+                });
+            } catch (IOException | ParseException ex) {
+                sender.sendMessage(this.getPlugin().getLocalizationManager().get("error.remote.unknown"));
+                this.getPlugin().getLogger().log(Level.SEVERE, "Could not read and parse Minepay response: " + ex.getMessage(), ex);
+            }
+        });
     }
 
-    @CommandHandler(usage = "<opt-in|opt-out|enable|disable|latest>", subCommands = { "opt-in", "opt-out", "enable", "disable", "latest" })
+    @CommandHandler(usage = "<opt-in|opt-out|enable|disable|latest>", subCommands = {"opt-in", "opt-out", "enable", "disable", "latest"})
     public void telemetry(@Nonnull CommandSender sender, @Nonnull Command command, @Nonnull String label, @Nonnull String[] arguments) {
         if (arguments.length != 1) {
             this.printLocalized(sender, "commands.arguments.many");

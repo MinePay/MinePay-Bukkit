@@ -184,4 +184,11 @@ public class Menu {
 
         return -1;
     }
+
+    /**
+     * Displays the menu on-screen for the current player.
+     */
+    public void show() {
+        this.player.openInventory(this.inventory);
+    }
 }

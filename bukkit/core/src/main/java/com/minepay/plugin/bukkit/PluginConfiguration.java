@@ -19,6 +19,7 @@ public class PluginConfiguration {
     public static final String CONFIGURATION_FILE_NAME = "configuration.properties";
 
     private String serverId = "";
+    private String storeName = "";
     private Locale locale = Locale.ENGLISH;
     private boolean telemetryEnabled = true;
 
@@ -29,6 +30,15 @@ public class PluginConfiguration {
 
     public void setServerId(@Nonnull String serverId) {
         this.serverId = serverId;
+    }
+
+    @Nonnull
+    public String getStoreName() {
+        return this.storeName;
+    }
+
+    public void setStoreName(@Nonnull String storeName) {
+        this.storeName = storeName;
     }
 
     public boolean isTelemetryEnabled() {

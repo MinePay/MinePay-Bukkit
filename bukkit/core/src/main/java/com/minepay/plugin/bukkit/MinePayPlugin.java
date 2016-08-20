@@ -2,6 +2,7 @@ package com.minepay.plugin.bukkit;
 
 import com.minepay.plugin.bukkit.boilerplate.BukkitBoilerplate;
 import com.minepay.plugin.bukkit.boilerplate.CraftBukkitBoilerplate;
+import com.minepay.plugin.bukkit.command.BuyCommandExecutor;
 import com.minepay.plugin.bukkit.command.ConfigurationCommandExecutor;
 import com.minepay.plugin.bukkit.gui.MenuManager;
 import com.minepay.plugin.bukkit.storefront.CartManager;
@@ -271,6 +272,7 @@ public class MinePayPlugin extends JavaPlugin {
 
         // register command executors
         this.getServer().getPluginCommand("minepay").setExecutor(new ConfigurationCommandExecutor(this));
+        this.getServer().getPluginCommand("buy").setExecutor(new BuyCommandExecutor(this));
 
         // warn user about missing configuration options
         if (this.configuration.getServerId().isEmpty()) {
